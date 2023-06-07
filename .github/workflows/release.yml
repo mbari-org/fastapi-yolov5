@@ -28,7 +28,7 @@ jobs:
 
   build:
     name: docker build
-    needs: [ release ]
+    needs: [ semantic_release ]
     runs-on: ubuntu-latest
     steps:
       - name: Check out code and all tags and branches

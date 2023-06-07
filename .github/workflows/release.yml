@@ -1,7 +1,8 @@
 name: New Release
 on:
-  branches:
-    - main
+  push:
+    branches:
+      - main
 jobs:
   semantic_release:
     runs-on: ubuntu-latest

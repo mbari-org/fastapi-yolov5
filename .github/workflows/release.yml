@@ -56,7 +56,7 @@ jobs:
       - name: Build and push to Docker Hub
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: src
           push: true
           tags: |
             mbari/fastapi-yolov5:${{ env.TAG }}

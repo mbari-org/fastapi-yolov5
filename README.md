@@ -14,7 +14,7 @@ This will start the FastAPI server on port 3000.  To start the server, run
 docker-compose up
 ```
 
-Check the health of the server by going to `http://localhost:3000/health`.  You should see the following response:
+Check the health of the server by going to `http://localhost:3000/`.  You should see the following response:
 
 ```json
 {"status":"ok"}

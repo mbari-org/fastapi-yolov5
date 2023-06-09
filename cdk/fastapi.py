@@ -25,18 +25,21 @@ class FastAPIStack(Stack):
             vpc=self.vpc,
         )
 
+        docker_image = ecs.ContainerImage.from_registry('mbari/fastapi-yolov5:1.0.0')
+
         # Create Fargate Service and ALB
-        image = ecs_patterns.ApplicationLoadBalancedTaskImageOptions(
-            image=ecs.ContainerImage.from_asset(
-                directory="../src",
-            )
+        # https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_ecs_patterns/ApplicationLoadBalancedTaskImageOptions.html
+        image_options = ecs_patterns.ApplicationLoadBalancedTaskImageOptions(
+            image=docker_image,
+            container_port=80
         )
+
         self.ecs_service = ecs_patterns.ApplicationLoadBalancedFargateService(
             self,
-            "FastAPIService",
+            "FastAPIYOLOv5Service",
             cluster=self.ecs_cluster,
             cpu=256,
             memory_limit_mib=512,
             desired_count=2,
-            task_image_options=image,
+            task_image_options=image_options,
         )

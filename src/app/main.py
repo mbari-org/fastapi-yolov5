@@ -47,7 +47,7 @@ app.add_middleware(
 )
 
 
-@app.get('/')
+@app.get('/health')
 def get_health():
     """
     Health check endpoint

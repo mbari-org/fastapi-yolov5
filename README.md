@@ -14,7 +14,7 @@ This will start the FastAPI server on port 3000.  To start the server, run
 docker-compose up
 ```
 
-Check the health of the server by going to `http://localhost:3000/`.  You should see the following response:
+Check the health of the server by going to `http://localhost:3000/health`.  You should see the following response:
 
 ```json
 {"status":"ok"}
@@ -24,7 +24,7 @@ Check the health of the server by going to `http://localhost:3000/`.  You should
 ```shell
 curl -X POST "http://localhost:3000/predict_to_json" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=@<path_to_image>"
 ```
-
+curl -X POST "http://fasta-fasta-1jn8a28zva0ow-873450790.us-west-2.elb.amazonaws.com/predict_to_json" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=/Users/dcline/Dropbox/code/fastapi-yolov5/waffle.png"
 To stop the server, run
 
 ```shell

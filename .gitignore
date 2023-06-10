@@ -1,4 +1,8 @@
-# checkpoints 
+# aws cdk
+aws-cdk-examples/
+cdk.out/
+
+# checkpoints
 .pt
 
 # test data

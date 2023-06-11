@@ -1,5 +1,12 @@
 # FastAPI-YOLOv5  Changelog
 
+## [1.1.1](https://github.com/mbari-org/fastapi-yolov5/compare/v1.1.0...v1.1.1) (2023-06-11)
+
+
+### Performance Improvements
+
+* reduce  conf to 0.1 ([d952f45](https://github.com/mbari-org/fastapi-yolov5/commit/d952f45a5064ce5c758ff228b9467eb67158d71c))
+
 # [1.1.0](https://github.com/mbari-org/fastapi-yolov5/compare/v1.0.0...v1.1.0) (2023-06-10)
 
 

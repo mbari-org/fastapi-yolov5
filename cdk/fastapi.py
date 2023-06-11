@@ -16,7 +16,7 @@ class FastAPIStack(Stack):
         super().__init__(scope, id, **kwargs)
 
         # Create VPC
-        vpc = ec2.Vpc(self, "FastAPIYOLOVv5VPC", max_azs=1)
+        vpc = ec2.Vpc(self, "FastAPIYOLOVv5VPC", max_azs=2)
 
         # Create Fargate Cluster
         ecs_cluster = ecs.Cluster(
@@ -42,7 +42,7 @@ class FastAPIStack(Stack):
             connection=ec2.Port.tcp(80)
         )
 
-        docker_image = ecs.ContainerImage.from_registry('mbari/fastapi-yolov5:1.0.1')
+        docker_image = ecs.ContainerImage.from_registry('mbari/fastapi-yolov5:1.1.0')
 
         # Configure health check on the load balancer
         # listener.add_targets('FastAPIYOLOVv5Target',

@@ -24,7 +24,6 @@ Check the health of the server by going to `http://localhost:3000/health`.  You 
 ```shell
 curl -X POST "http://localhost:3000/predict_to_json" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=@<path_to_image>"
 ```
-curl -X POST "http://fasta-fasta-1jn8a28zva0ow-873450790.us-west-2.elb.amazonaws.com/predict_to_json" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=/Users/dcline/Dropbox/code/fastapi-yolov5/waffle.png"
 To stop the server, run
 
 ```shell
@@ -35,3 +34,40 @@ docker-compose down
 # Deploy YOLOv5 in AWS
 
 FastAPI deployed with ECS Fargate and exposed with an Application Load Balancer
+
+```shell
+cdk bootstrap
+cdk deploy
+```
+
+You should see at the end the exposed endpoint, e.g. **http://FastA-FastA-53HYPWCIRUXS-1905789853.us-west-2.elb.amazonaws.com** below.
+
+
+```shell
+FastAPIStack: deploying... [1/1]
+FastAPIStack: creating CloudFormation changeset...
+
+ ✅  FastAPIStack
+
+✨  Deployment time: 369.74s
+
+Outputs:
+FastAPIStack.FastAPIYOLOv5ServiceLoadBalancerDNS68FA283F = FastA-FastA-53HYPWCIRUXS-1905789853.us-west-2.elb.amazonaws.com
+FastAPIStack.FastAPIYOLOv5ServiceServiceURL365F19C7 = http://FastA-FastA-53HYPWCIRUXS-1905789853.us-west-2.elb.amazonaws.com
+Stack ARN:
+arn:aws:cloudformation:us-west-2:975513124282:stack/FastAPIStack/89fcc790-07d4-11ee-924e-02e23803e407
+
+✨  Total time: 377.69s
+```
+
+Test this by downloading a test image
+
+```shell
+
+```
+
+Then run through the endpoint
+
+```
+curl -X POST "http://FastA-FastA-53HYPWCIRUXS-1905789853.us-west-2.elb.amazonaws.com/predict_to_json" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=waffle.png"
+```

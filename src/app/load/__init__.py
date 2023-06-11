@@ -6,7 +6,7 @@ def load_yolov5():
     print("Loading model...")
     # local best.pt
     model = torch.hub.load('yolov5', 'custom', path='model/best.pt', source='local')  # local repo
-    model.conf = 0.5
+    model.conf = 0.10
     print(f"Model loaded...")
     return model
 

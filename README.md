@@ -60,14 +60,38 @@ arn:aws:cloudformation:us-west-2:975513124282:stack/FastAPIStack/89fcc790-07d4-1
 ✨  Total time: 377.69s
 ```
 
-Test this by downloading a test image
+Test this by running a test image through the endpoint
+
+```
+curl -X POST "http://FastA-FastA-53HYPWCIRUXS-1905789853.us-west-2.elb.amazonaws.com/predict_to_json" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=tests/midwater.png"
+```
+
+## Deploying a custom model locally
+
+To override the default model, you can mount a local directory to the container and set the MODEL_PATH environment variable.
+For example, if you have a model in the directory `~/models/best`, you can mount that directory to the container by adding the following to the `docker-compose.yml` file
+and the  MODEL_PATH environment variable to the `environment` section of the `app` service:
+```yaml
+app:
+    volumes:
+      - ~/models/best:/app/models/best
+    environment:
+      - MODEL_PATH=/app/models/best
+```
+
+The directory should contain the `best.pt` file and the labels file labels.txt for that model.
+The labels file should be in the format of one label per line.
 
 ```shell
-
+docker-compose up
 ```
 
-Then run through the endpoint
+## Deploying a custom model in AWS
 
-```
-curl -X POST "http://FastA-FastA-53HYPWCIRUXS-1905789853.us-west-2.elb.amazonaws.com/predict_to_json" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=waffle.png"
+To override the default model, upload the `best.pt` file and the labels file `labels.txt` for that model to an S3 bucket.
+Specify the S3 bucket in the `MODEL_PATH` environment variable in the `cdk.json` file, then deploy.
+The S3 bucket must be in the same region as the ECS cluster
+
+```shell
+cdk deploy
 ```

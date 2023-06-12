@@ -44,11 +44,6 @@ class FastAPIStack(Stack):
 
         docker_image = ecs.ContainerImage.from_registry('mbari/fastapi-yolov5:1.1.0')
 
-        # Configure health check on the load balancer
-        # listener.add_targets('FastAPIYOLOVv5Target',
-        #                      port=80,
-        #                      targets=[ecs_service],
-        #                      health_check=health_check)
         # Create Fargate Service and ALB
         # https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_ecs_patterns/ApplicationLoadBalancedTaskImageOptions.html
         image_options = ecs_patterns.ApplicationLoadBalancedTaskImageOptions(

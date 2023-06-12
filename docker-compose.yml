@@ -3,3 +3,11 @@ services:
     build: src
     ports:
       - "3000:80"
+# Example below to add for either local or cloud deployment
+#    environment:
+#      - MODEL_PATH=/app/models/midwater # Local model deployment
+#      - MODEL_PATH=s3://901103-models-deploy/midwater/ # Cloud model deployment
+# Model checkpoints in this path must be called best.pt and labels for this model one per each line in labels.txt
+#    volumes:
+#      - ~/models/best:/app/models/midwater # Local model deployment
+#      - ${HOME}/.aws/credentials:/root/.aws/credentials:ro # Testing cloud model deployment - not needed for CDK deployment

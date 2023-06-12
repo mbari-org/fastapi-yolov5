@@ -1,3 +1,6 @@
 {
-    "app": "python3 cdk/cdk.py"
+    "app": "python3 cdk/cdk.py",
+    "env": {
+        "MODEL_PATH": "model/"
+    }
 }

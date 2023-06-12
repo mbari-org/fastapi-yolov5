@@ -1,5 +1,12 @@
 # FastAPI-YOLOv5  Changelog
 
+# [1.2.0](https://github.com/mbari-org/fastapi-yolov5/compare/v1.1.1...v1.2.0) (2023-06-12)
+
+
+### Features
+
+* added support for loading a custom model via env MODEL_PATH either local or S3 ([802e3e9](https://github.com/mbari-org/fastapi-yolov5/commit/802e3e9910bd10c58118fa48bdafca1a124503de))
+
 ## [1.1.1](https://github.com/mbari-org/fastapi-yolov5/compare/v1.1.0...v1.1.1) (2023-06-11)
 
 

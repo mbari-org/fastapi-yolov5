@@ -70,7 +70,7 @@ def load_yolov5():
     print(f"Model path: {model_path}")
 
     model = torch.hub.load('yolov5', 'custom', path=model_path.as_posix(), source='local')  # local repo
-    model.conf = 0.10
+    model.conf = 0.01
 
     global MAX_IMAGE_SIZE
     # Set the maximum image size based on the model input size (first layer)

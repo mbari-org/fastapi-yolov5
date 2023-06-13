@@ -1,5 +1,12 @@
 # FastAPI-YOLOv5  Changelog
 
+# [1.3.0](https://github.com/mbari-org/fastapi-yolov5/compare/v1.2.0...v1.3.0) (2023-06-13)
+
+
+### Features
+
+* added secrets and cloud model load to cdk ([7a4dc23](https://github.com/mbari-org/fastapi-yolov5/commit/7a4dc236db02c9a9a3c52a6e6e06b9e2b794e365))
+
 # [1.2.0](https://github.com/mbari-org/fastapi-yolov5/compare/v1.1.1...v1.2.0) (2023-06-12)
 
 

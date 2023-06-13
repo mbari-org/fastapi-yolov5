@@ -1,5 +1,12 @@
 # FastAPI-YOLOv5  Changelog
 
+## [1.3.2](https://github.com/mbari-org/fastapi-yolov5/compare/v1.3.1...v1.3.2) (2023-06-13)
+
+
+### Performance Improvements
+
+* added autoscaling ([80c4623](https://github.com/mbari-org/fastapi-yolov5/commit/80c462391ea9ee88a20a1fecc6467906ff060a81))
+
 ## [1.3.1](https://github.com/mbari-org/fastapi-yolov5/compare/v1.3.0...v1.3.1) (2023-06-13)
 
 

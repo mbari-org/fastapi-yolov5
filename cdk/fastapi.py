@@ -33,8 +33,8 @@ class FastAPIStack(Stack):
         
         # Create Security Group to restrict access to the FastAPI service from a specific IP mask
 
-        # MBARI IP mask
-        ip_mask = '134.89.0.0/0'
+        # MBARI IP mask up to 65,536 possible host addresses from the MBARI subnet
+        ip_mask = '134.89.0.0/16'
 
         # Create a security group
         security_group = ec2.SecurityGroup(
@@ -53,7 +53,7 @@ class FastAPIStack(Stack):
         # Retrieve the AWS access key ID secret value from AWS Secrets Manager
         secret = secrets_manager.Secret.from_secret_name_v2(self, "MySecretID", secret_name="prod/s3download")
 
-        docker_image = ecs.ContainerImage.from_registry('mbari/fastapi-yolov5:1.2.0')
+        docker_image = ecs.ContainerImage.from_registry('mbari/fastapi-yolov5:1.3.1')
 
         # Create Fargate Service and ALB
         # https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_ecs_patterns/ApplicationLoadBalancedTaskImageOptions.html
@@ -90,3 +90,16 @@ class FastAPIStack(Stack):
             interval=Duration.seconds(60),
             timeout=Duration.seconds(5),
         )
+
+        # Increase scaling speed
+        scaling = self.ecs_service.service.auto_scale_task_count(
+            min_capacity=1,
+            max_capacity=20,
+        )
+        
+        scaling.scale_on_cpu_utilization('CpuScaling',
+            target_utilization_percent=80,  # Adjust target CPU utilization based on your needs
+            scale_in_cooldown=Duration.seconds(30),
+            scale_out_cooldown=Duration.seconds(30),
+        )
+

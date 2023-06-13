@@ -1,9 +1,15 @@
 from aws_cdk import Stack
 from constructs import Construct
-
-import aws_cdk.aws_ec2 as ec2
-import aws_cdk.aws_ecs as ecs
-import aws_cdk.aws_ecs_patterns as ecs_patterns
+import aws_cdk
+from aws_cdk import (
+            aws_ecs as ecs,
+            aws_ec2 as ec2,
+            aws_ecs_patterns as ecs_patterns,
+            aws_secretsmanager as secrets_manager,
+            )
+#import aws_cdk.aws_ec2 as ec2
+#import aws_cdk.aws_ecs as ecs
+#import aws_cdk.aws_ecs_patterns as ecs_patterns
 from aws_cdk import CfnOutput, Duration
 
 class FastAPIStack(Stack):
@@ -42,13 +48,25 @@ class FastAPIStack(Stack):
             connection=ec2.Port.tcp(80)
         )
 
-        docker_image = ecs.ContainerImage.from_registry('mbari/fastapi-yolov5:1.1.0')
+        # Retrieve the secret value from AWS Secrets Manager
+        
+        # Retrieve the AWS access key ID secret value from AWS Secrets Manager
+        secret = secrets_manager.Secret.from_secret_name_v2(self, "MySecretID", secret_name="prod/s3download")
+
+        docker_image = ecs.ContainerImage.from_registry('mbari/fastapi-yolov5:1.2.0')
 
         # Create Fargate Service and ALB
         # https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_ecs_patterns/ApplicationLoadBalancedTaskImageOptions.html
         image_options = ecs_patterns.ApplicationLoadBalancedTaskImageOptions(
             image=docker_image,
             container_port=80,
+            environment={
+                "MODEL_PATH": "s3://901103-models-deploy/midwatervars102/"
+            },
+            secrets={
+                "AWS_ACCESS_KEY_ID": ecs.Secret.from_secrets_manager(secret, "AWS_ACCESS_KEY_ID"),
+                "AWS_SECRET_ACCESS_KEY": ecs.Secret.from_secrets_manager(secret, "AWS_SECRET_ACCESS_KEY")
+            }
         )
 
         # https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_ecs_patterns/ApplicationLoadBalancedFargateService.html
@@ -60,7 +78,7 @@ class FastAPIStack(Stack):
             memory_limit_mib=8192,
             desired_count=1,
             task_image_options=image_options,
-            security_groups=[security_group]
+            security_groups=[security_group],
 
         )
 

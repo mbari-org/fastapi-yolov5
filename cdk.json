@@ -1,6 +1,6 @@
 {
     "app": "python3 cdk/cdk.py",
     "env": {
-        "MODEL_PATH": "model/"
+        "MODEL_PATH": "s3://901103-models-deploy/midwatervars102/"
     }
 }

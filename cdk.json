@@ -1,6 +1,8 @@
 {
     "app": "python3 cdk/cdk.py",
-    "env": {
-        "MODEL_PATH": "s3://901103-models-deploy/midwatervars102/"
+    "context": {
+        "MODEL_PATH": "s3://901103-models-deploy/midwatervars102/",
+        "MIN_CAPACITY": 1,
+        "MAX_CAPACITY": 20,
     }
 }

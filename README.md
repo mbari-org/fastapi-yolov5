@@ -89,7 +89,7 @@ docker-compose up
 ## Deploying a custom model in AWS
 
 To override the default model, upload the `best.pt` file and the labels file `labels.txt` for that model to an S3 bucket.
-Specify the S3 bucket in the `MODEL_PATH` environment variable in the `cdk.json` file, then deploy.
+Specify the S3 bucket in the `MODEL_PATH` variable in the `cdk.json` file, then deploy.
 The S3 bucket must be in the same region as the ECS cluster
 
 ```shell

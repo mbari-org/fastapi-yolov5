@@ -1,16 +1,29 @@
+# !/usr/bin/env python
+__author__ = "Danelle Cline"
+__copyright__ = "Copyright 2023, MBARI"
+__credits__ = ["MBARI"]
+__license__ = "GPL"
+__maintainer__ = "Danelle Cline"
+__email__ = "dcline at mbari.org"
+__doc__ = '''
+
+Elastic YOLOv5 model deployed using AWS Fargate and AWS CDK
+
+@author: __author__
+@status: __status__
+@license: __license__
+'''
+
 from aws_cdk import Stack
 from constructs import Construct
-import aws_cdk
 from aws_cdk import (
-            aws_ecs as ecs,
-            aws_ec2 as ec2,
-            aws_ecs_patterns as ecs_patterns,
-            aws_secretsmanager as secrets_manager,
-            )
-#import aws_cdk.aws_ec2 as ec2
-#import aws_cdk.aws_ecs as ecs
-#import aws_cdk.aws_ecs_patterns as ecs_patterns
+    aws_ecs as ecs,
+    aws_ec2 as ec2,
+    aws_ecs_patterns as ecs_patterns,
+    aws_secretsmanager as secrets_manager,
+)
 from aws_cdk import CfnOutput, Duration
+
 
 class FastAPIStack(Stack):
     def __init__(
@@ -21,6 +34,11 @@ class FastAPIStack(Stack):
     ) -> None:
         super().__init__(scope, id, **kwargs)
 
+        # Get the model path, and capacity from the CDK context
+        model_path = self.node.try_get_context("MODEL_PATH")
+        min_capacity = self.node.try_get_context("MIN_CAPACITY")
+        max_capacity = self.node.try_get_context("MAX_CAPACITY")
+
         # Create VPC
         vpc = ec2.Vpc(self, "FastAPIYOLOVv5VPC", max_azs=2)
 
@@ -30,7 +48,7 @@ class FastAPIStack(Stack):
             "FastAPIYOLOVv5ECSCluster",
             vpc=vpc,
         )
-        
+
         # Create Security Group to restrict access to the FastAPI service from a specific IP mask
 
         # MBARI IP mask up to 65,536 possible host addresses from the MBARI subnet
@@ -49,11 +67,11 @@ class FastAPIStack(Stack):
         )
 
         # Retrieve the secret value from AWS Secrets Manager
-        
+
         # Retrieve the AWS access key ID secret value from AWS Secrets Manager
         secret = secrets_manager.Secret.from_secret_name_v2(self, "MySecretID", secret_name="prod/s3download")
 
-        docker_image = ecs.ContainerImage.from_registry('mbari/fastapi-yolov5:1.3.1')
+        docker_image = ecs.ContainerImage.from_registry('mbari/fastapi-yolov5:lastest')
 
         # Create Fargate Service and ALB
         # https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_ecs_patterns/ApplicationLoadBalancedTaskImageOptions.html
@@ -61,7 +79,7 @@ class FastAPIStack(Stack):
             image=docker_image,
             container_port=80,
             environment={
-                "MODEL_PATH": "s3://901103-models-deploy/midwatervars102/"
+                "MODEL_PATH": model_path,
             },
             secrets={
                 "AWS_ACCESS_KEY_ID": ecs.Secret.from_secrets_manager(secret, "AWS_ACCESS_KEY_ID"),
@@ -93,13 +111,12 @@ class FastAPIStack(Stack):
 
         # Increase scaling speed
         scaling = self.ecs_service.service.auto_scale_task_count(
-            min_capacity=1,
-            max_capacity=20,
-        )
-        
-        scaling.scale_on_cpu_utilization('CpuScaling',
-            target_utilization_percent=80,  # Adjust target CPU utilization based on your needs
-            scale_in_cooldown=Duration.seconds(30),
-            scale_out_cooldown=Duration.seconds(30),
+            min_capacity=min_capacity,
+            max_capacity=max_capacity,
         )
 
+        scaling.scale_on_cpu_utilization('CpuScaling',
+                                         target_utilization_percent=80,
+                                         scale_in_cooldown=Duration.seconds(30),
+                                         scale_out_cooldown=Duration.seconds(30),
+                                         )

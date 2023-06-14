@@ -66,10 +66,17 @@ def upload(file: UploadFile = File(...)):
     """
     try:
         contents = file.file.read() # bytes
-        imput_image = scale_image(contents)
+        imput_image, resize_factor = scale_image(contents)
         results = model(imput_image)
         detect_res = results.pandas().xyxy[0].to_json(orient="records")  # JSON predictions
         detect_res = json.loads(detect_res)
+        # Rescale the bounding boxes to the original image size
+        for i in range(len(detect_res)):
+            print(detect_res[i])
+            detect_res[i]["xmin"] = int(detect_res[i]["xmin"] / resize_factor)
+            detect_res[i]["xmax"] = int(detect_res[i]["xmax"] / resize_factor)
+            detect_res[i]["ymin"] = int(detect_res[i]["ymin"] / resize_factor)
+            detect_res[i]["ymax"] = int(detect_res[i]["ymax"] / resize_factor)
         return {"result": detect_res}
     except Exception as e:
         print(e)
@@ -89,7 +96,7 @@ async def predict_to_img(file: UploadFile = File(...)):
     """
     try:
         contents = file.file.read()  # bytes
-        input_image = scale_image(contents)
+        input_image, _ = scale_image(contents)
         results = model(input_image)
         results.render()  # save the results with boxes and labels
         for img in results.imgs:

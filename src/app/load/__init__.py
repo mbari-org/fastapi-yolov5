@@ -7,13 +7,23 @@ import torch
 from PIL import Image
 import io
 
-# Maximum size of any YOLOv5 models
-MAX_IMAGE_SIZE = 1024
+MODEL_INPUT_SIZE = 640
 
 
 def load_yolov5():
     print("Loading model...")
     model_labels = None
+    global MODEL_INPUT_SIZE
+    # TODO: move this and labels to read from a yaml file
+
+    # Check if the model input size is specified in the environment variable MODEL_INPUT_SIZE
+    # If not, use the default image size
+    if os.getenv("MODEL_INPUT_SIZE") is None:
+        print(f"MODEL_INPUT_SIZE environment variable not found, using default image size {MODEL_INPUT_SIZE}")
+    else:
+        print(f"MODEL_INPUT_SIZE environment variable found {os.getenv('MODEL_INPUT_SIZE')}")
+        MODEL_INPUT_SIZE = int(os.getenv("MODEL_INPUT_SIZE"))
+
 
     # Check if the model path is specified in the environment variable MODEL_PATH
     # If not, use the default model path
@@ -72,11 +82,6 @@ def load_yolov5():
     model = torch.hub.load('yolov5', 'custom', path=model_path.as_posix(), source='local')  # local repo
     model.conf = 0.01
 
-    global MAX_IMAGE_SIZE
-    # Set the maximum image size based on the model input size (first layer)
-    first_layer = next(model.parameters())
-    MAX_IMAGE_SIZE = first_layer.shape[1:]
-
     if model_labels:
         print(f"Loading class labels from {label_path}")
         with label_path.open('r') as f:
@@ -89,16 +94,17 @@ def load_yolov5():
     return model
 
 
-def scale_image(bytes_images, max_size=MAX_IMAGE_SIZE):
+def scale_image(bytes_images):
+    global MODEL_INPUT_SIZE
     input_image = Image.open(io.BytesIO(bytes_images)).convert("RGB")
     width, height = input_image.size
-    resize_factor = min(max_size / width, max_size / height)
+    resize_factor = min(MODEL_INPUT_SIZE / width, MODEL_INPUT_SIZE / height)
     if resize_factor == 1.0:
-        return input_image
+        return input_image, 1.0
     resized_image = input_image.resize(
         (
             int(input_image.width * resize_factor),
             int(input_image.height * resize_factor),
         )
     )
-    return resized_image
+    return resized_image, resize_factor

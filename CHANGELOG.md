@@ -1,5 +1,12 @@
 # FastAPI-YOLOv5  Changelog
 
+# [1.4.0](https://github.com/mbari-org/fastapi-yolov5/compare/v1.3.2...v1.4.0) (2023-06-14)
+
+
+### Features
+
+* trigger release ([9d3edcc](https://github.com/mbari-org/fastapi-yolov5/commit/9d3edcc7e3bfd4da965aa853fd47571cbfe17f38))
+
 ## [1.3.2](https://github.com/mbari-org/fastapi-yolov5/compare/v1.3.1...v1.3.2) (2023-06-13)
 
 

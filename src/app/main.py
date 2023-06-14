@@ -4,7 +4,7 @@ __copyright__ = "Copyright 2023, MBARI"
 __credits__ = ["MBARI"]
 __license__ = "GPL"
 __maintainer__ = "Danelle Cline"
-__email__ = "duane at mbari.org"
+__email__ = "dcline at mbari.org"
 __doc__ = '''
 
 Run a FastAPI server to serve the YOLOv5 model

@@ -1,5 +1,12 @@
 # FastAPI-YOLOv5  Changelog
 
+## [1.4.1](https://github.com/mbari-org/fastapi-yolov5/compare/v1.4.0...v1.4.1) (2023-06-14)
+
+
+### Bug Fixes
+
+* correct formatting of cdk.json ([f152fe7](https://github.com/mbari-org/fastapi-yolov5/commit/f152fe7f09dfaf37859c3d767458ae7c956a7dc6))
+
 # [1.4.0](https://github.com/mbari-org/fastapi-yolov5/compare/v1.3.2...v1.4.0) (2023-06-14)
 
 

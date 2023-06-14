@@ -13,7 +13,6 @@ Scalable deployment of YOLOv5 model
 @status: __status__
 @license: __license__
 '''
-import json
 from aws_cdk import App
 from fastapi import FastAPIStack
 

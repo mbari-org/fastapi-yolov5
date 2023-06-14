@@ -23,7 +23,7 @@ from aws_cdk import (
     aws_secretsmanager as secrets_manager,
 )
 from aws_cdk import CfnOutput, Duration
-
+from app import __version__
 
 class FastAPIStack(Stack):
     def __init__(
@@ -71,7 +71,7 @@ class FastAPIStack(Stack):
         # Retrieve the AWS access key ID secret value from AWS Secrets Manager
         secret = secrets_manager.Secret.from_secret_name_v2(self, "MySecretID", secret_name="prod/s3download")
 
-        docker_image = ecs.ContainerImage.from_registry('mbari/fastapi-yolov5:lastest')
+        docker_image = ecs.ContainerImage.from_registry(f'mbari/fastapi-yolov5:{__version__}')
 
         # Create Fargate Service and ALB
         # https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_ecs_patterns/ApplicationLoadBalancedTaskImageOptions.html

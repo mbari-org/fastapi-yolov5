@@ -26,7 +26,7 @@
       [
         "@semantic-release/exec",
         {
-          "prepareCmd": "printf '#!/usr/bin/env python\\n__version__ = \"%s\"\\n' ${nextRelease.version} > src/app/__init__.py",
+          "prepareCmd": "printf '#!/usr/bin/env python\\n__version__ = \"%s\"\\n' ${nextRelease.version} > src/app/__init__.py && printf '#!/usr/bin/env python\\n__version__ = \"%s\"\\n' ${nextRelease.version} > cdk/app/__init__.py",
           "publishCmd": "git commit -a -m 'build: bumped version' && git push"
         }
       ],

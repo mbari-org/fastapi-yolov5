@@ -1,5 +1,12 @@
 # FastAPI-YOLOv5  Changelog
 
+# [1.5.0](https://github.com/mbari-org/fastapi-yolov5/compare/v1.4.1...v1.5.0) (2023-06-22)
+
+
+### Features
+
+* switch to yaml config of stack ([7fe642c](https://github.com/mbari-org/fastapi-yolov5/commit/7fe642c6ac0f56ea96100c687470efd2c660ac73))
+
 ## [1.4.1](https://github.com/mbari-org/fastapi-yolov5/compare/v1.4.0...v1.4.1) (2023-06-14)
 
 

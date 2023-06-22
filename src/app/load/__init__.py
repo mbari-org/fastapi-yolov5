@@ -24,12 +24,13 @@ def load_yolov5():
         print(f"MODEL_INPUT_SIZE environment variable found {os.getenv('MODEL_INPUT_SIZE')}")
         MODEL_INPUT_SIZE = int(os.getenv("MODEL_INPUT_SIZE"))
 
-
     # Check if the model path is specified in the environment variable MODEL_PATH
     # If not, use the default model path
     if os.getenv("MODEL_PATH") is None:
         print("MODEL_PATH environment variable not found, using default model path")
-        model_path = Path("model/best.pt")
+        path = Path(__file__).parent.parent / "model"
+        model_path = path / 'best.pt'
+        label_path = path / 'labels.txt'
     else:
         print(f"MODEL_PATH environment variable found {os.getenv('MODEL_PATH')}")
 
@@ -54,8 +55,10 @@ def load_yolov5():
                 # Example: s3://bucket-name/path/to/model/
                 if model_path_p.netloc and model_path_p.path:
                     print(f"Downloading model from s3://{model_path_p.netloc}{model_path_p.path}best.pt")
-                    s3_client.download_file(model_path_p.netloc, f"{model_path_p.path.lstrip('/')}best.pt", model_path.as_posix())
-                    s3_client.download_file(model_path_p.netloc, f"{model_path_p.path.lstrip('/')}labels.txt", label_path.as_posix())
+                    s3_client.download_file(model_path_p.netloc, f"{model_path_p.path.lstrip('/')}best.pt",
+                                            model_path.as_posix())
+                    s3_client.download_file(model_path_p.netloc, f"{model_path_p.path.lstrip('/')}labels.txt",
+                                            label_path.as_posix())
                 elif model_path_p.netloc:
                     print(f"Downloading model from s3://{model_path_p.netloc}best.pt")
                     s3_client.download_file(model_path_p.netloc, 'best.pt', model_path.as_posix())

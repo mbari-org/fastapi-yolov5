@@ -13,10 +13,38 @@ Scalable deployment of YOLOv5 model
 @status: __status__
 @license: __license__
 '''
-from aws_cdk import App
+import datetime as dt
+import yaml
 from fastapi import FastAPIStack
+from aws_cdk import (
+    App, Environment
+)
 
 app = App()
 
-FastAPIStack(app, id="FastAPIStack")
+# Import project config
+with open("config.yml", 'r') as stream:
+    config = yaml.safe_load(stream)
+
+deletion_date = (dt.datetime.utcnow() + dt.timedelta(days=90)).strftime('%Y%m%dT%H%M%SZ')
+
+# Tagging; these are used to track costs and for lifecycle management
+# Replace with your own tags
+tag_dict = {'mbari:project-number': str(config['ProjectNumber']),
+            'mbari:owner': config['Author'],
+            'mbari:description': 'YOLOv5 detection model',
+            'mbari:customer-project': str(config['ProjectNumber']),
+            'mbari:stage': 'test',
+            'mbari:application': 'processing',
+            'mbari:deletion-date': deletion_date,
+            'mbari:created-by': config['Author']}
+
+env = Environment(account=str(config['Account']), region=config['Region'])
+print(env)
+app = App()
+
+FastAPIStack(app, "FastAPIYOLOv5Stack",
+             env=env,
+             tags=tag_dict,
+             description=config['Description'], )
 app.synth()

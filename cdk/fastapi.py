@@ -14,6 +14,7 @@ Elastic YOLOv5 model deployed using AWS Fargate and AWS CDK
 @license: __license__
 '''
 
+import yaml
 from aws_cdk import Stack
 from constructs import Construct
 from aws_cdk import (
@@ -34,10 +35,14 @@ class FastAPIStack(Stack):
     ) -> None:
         super().__init__(scope, id, **kwargs)
 
-        # Get the model path, and capacity from the CDK context
-        model_path = self.node.try_get_context("MODEL_PATH")
-        min_capacity = self.node.try_get_context("MIN_CAPACITY")
-        max_capacity = self.node.try_get_context("MAX_CAPACITY")
+        # Import project config
+        with open("config.yml", 'r') as stream:
+            config = yaml.safe_load(stream)
+
+        # Get the model path, and capacity from the config file
+        model_path = config['ModelPath']
+        min_capacity = config['MinCapacity']
+        max_capacity = config['MaxCapacity']
 
         # Create VPC
         vpc = ec2.Vpc(self, "FastAPIYOLOVv5VPC", max_azs=2)

@@ -1,0 +1,11 @@
+Environment: Production
+Author: DCline
+Region: us-west-2
+MinCapacity: 1
+MaxCapacity: 20
+Account: 975513124282
+ProjectName: FastAPI-YOLOv5
+ProjectNumber: 901103-yv5
+Description: This stack deploys a Fargate managed ELB environment for creating localized detections from a YOLOv5 model using the FastAPI framework
+DockerURI: public.ecr.aws/e5z9d1o0/mbari/pypampsd:444bb3b486087df80ff38bdf05683ec52fd180c1
+ModelPath: s3://901103-models-deploy/midwatervars102/

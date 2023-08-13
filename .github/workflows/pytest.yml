@@ -26,5 +26,9 @@ jobs:
           aws s3 cp --no-sign-request s3://902005-public/models/Megadetector/best.pt src/app/model/
           aws s3 cp --no-sign-request s3://902005-public/models/Megadetector/labels.txt src/app/model/
 
+      - name: Set up environment
+        run: |
+          export PYTHONPATH=$PYTHONPATH:src
+
       - name: Run pytest
         run: pytest

@@ -2,7 +2,7 @@ name: fastapi-yolov5
 channels:
   - conda-forge
 dependencies:
-  - python>=3.8
+  - python>=3.10
   - pip:
     - aws-cdk.cdk
     - aws-cdk-lib>2.0.0

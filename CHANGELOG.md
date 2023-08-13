@@ -1,5 +1,12 @@
 # FastAPI-YOLOv5  Changelog
 
+## [1.0.1](https://github.com/mbari-org/fastapi-yolov5/compare/v1.0.0...v1.0.1) (2023-08-13)
+
+
+### Bug Fixes
+
+* correct docker build for 3.10 as needed for current design ([0608b74](https://github.com/mbari-org/fastapi-yolov5/commit/0608b74cfa5ec83c89b45ddb35742e4b6f15b0db))
+
 # 1.0.0 (2023-08-13)
 
 

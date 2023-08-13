@@ -1,5 +1,31 @@
 # FastAPI-YOLOv5  Changelog
 
+# 1.0.0 (2023-08-13)
+
+
+### Bug Fixes
+
+* correct formatting of cdk.json ([1bf3bfb](https://github.com/mbari-org/fastapi-yolov5/commit/1bf3bfbce9cccec476d3466748d3980fac07e193))
+* entrypoint for docker image ([042485b](https://github.com/mbari-org/fastapi-yolov5/commit/042485b848a99011038045575bd717a15334d0dd))
+
+
+### Features
+
+* added MBARI security group and health check ([7889a71](https://github.com/mbari-org/fastapi-yolov5/commit/7889a714f80adfdd5be277c01b63ba6eb163f9c0))
+* added secrets and cloud model load to cdk ([6016e3c](https://github.com/mbari-org/fastapi-yolov5/commit/6016e3c2f09ec6b4ba462b442059f3325a00d135))
+* added support for loading a custom model via env MODEL_PATH either local or S3 ([59620b3](https://github.com/mbari-org/fastapi-yolov5/commit/59620b310c96fc8e44d0010ce46ac358ea075823))
+* initial commit ([5fdae39](https://github.com/mbari-org/fastapi-yolov5/commit/5fdae3908e6076844dd9bd5c5a1f15b34498a281))
+* Megadetector default, added description, output png instead of png, better pandas record handling and fixed ingress rules in CDK to force MBARI only access ([70a9081](https://github.com/mbari-org/fastapi-yolov5/commit/70a9081bf18594ecd763014c937faf9b7d8affa2))
+* switch to yaml config of stack ([bc08b56](https://github.com/mbari-org/fastapi-yolov5/commit/bc08b56597a00b9c9f35340b547a05a69406a419))
+* trigger release ([e483963](https://github.com/mbari-org/fastapi-yolov5/commit/e483963a5ebf9352602a7fdae19a80eb5c0cd398))
+
+
+### Performance Improvements
+
+* added autoscaling ([58d3a60](https://github.com/mbari-org/fastapi-yolov5/commit/58d3a60ffd011448381dae0681dd69e115c44e14))
+* reduce  conf to 0.1 ([ad1dcb8](https://github.com/mbari-org/fastapi-yolov5/commit/ad1dcb86d48bcf1a136eb565ee36d9179088acdf))
+* reduce conf default to .01 ([49ee785](https://github.com/mbari-org/fastapi-yolov5/commit/49ee7856c7ce6367f8482a9df3359fd2ab328d46))
+
 # [1.5.0](https://github.com/mbari-org/fastapi-yolov5/compare/v1.4.1...v1.5.0) (2023-06-22)
 
 

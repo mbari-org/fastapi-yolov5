@@ -34,16 +34,16 @@ jobs:
           aws s3 cp --no-sign-request s3://902005-public/models/Megadetector/best.pt src/app/model/
           aws s3 cp --no-sign-request s3://902005-public/models/Megadetector/labels.txt src/app/model/
 
-      - name: Set up environment
-        run: |
-          export PYTHONPATH=$PYTHONPATH:src
-
-      - name: Run pytest
+      - name: Set PYTHONPATH and Run Tests
+        env:
+          PYTHONPATH: src
         run: pytest
 
   semantic_release:
     runs-on: ubuntu-latest
     name: Runs semantic release
+    requires:
+      - test
     steps:
       - name: Checkout
         uses: actions/checkout@v3

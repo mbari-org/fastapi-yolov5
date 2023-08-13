@@ -60,7 +60,7 @@ Send a POST request to `http://localhost:8000/image` with an image file in the b
 By default, predictions greater than 0.01 are displayed.
 
 ```shell
-curl -X POST "http://localhost:8000/image" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=@tests/midwater.png"
+curl -X POST "http://localhost:8000/image" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=@tests/midwater.png" -o midwater_detect.png
 ```
 
 ![Image link ](tests/midwater_predict_to_image.png)

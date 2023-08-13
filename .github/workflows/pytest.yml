@@ -1,0 +1,27 @@
+name: Run pytest
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download data
+        run: |
+          aws s3 cp --no-sign-request s3://902005-public/models/Megadetector/best.pt src/app/model/
+          aws s3 cp --no-sign-request s3://902005-public/models/Megadetector/labels.txt src/app/model/
+
+      - name: Run pytest
+        run: pytest

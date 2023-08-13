@@ -7,8 +7,8 @@ on:
     branches:
       - main
 
-# Support running these jobs manually
-workflow_dispatch:
+  # Support running these jobs manually
+  workflow_dispatch:
 
 jobs:
   test:

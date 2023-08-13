@@ -34,7 +34,7 @@ tag_dict = {'mbari:project-number': str(config['ProjectNumber']),
             'mbari:owner': config['Author'],
             'mbari:description': 'YOLOv5 detection model',
             'mbari:customer-project': str(config['ProjectNumber']),
-            'mbari:stage': 'test',
+            'mbari:stage': 'prod',
             'mbari:application': 'processing',
             'mbari:deletion-date': deletion_date,
             'mbari:created-by': config['Author']}

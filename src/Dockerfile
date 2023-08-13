@@ -33,6 +33,6 @@ WORKDIR /src/app
 
 COPY ./requirements.txt /src/requirements.txt
 COPY ./app /src/app
-RUN pip install --no-cache-dir --upgrade -r /src/requirements.txt && pip install --no-cache-dir python-multipart && pip install --no-cache-dir --upgrade -r /src/app/yolov5/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /src/requirements.txt && pip install --no-cache-dir --upgrade -r /src/app/yolov5/requirements.txt
 EXPOSE 80
 ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]

@@ -26,12 +26,13 @@ from aws_cdk import (
 from aws_cdk import CfnOutput, Duration
 from app import __version__
 
+
 class FastAPIStack(Stack):
     def __init__(
-        self,
-        scope: Construct,
-        id: str,
-        **kwargs,
+            self,
+            scope: Construct,
+            id: str,
+            **kwargs,
     ) -> None:
         super().__init__(scope, id, **kwargs)
 
@@ -43,6 +44,8 @@ class FastAPIStack(Stack):
         model_path = config['ModelPath']
         min_capacity = config['MinCapacity']
         max_capacity = config['MaxCapacity']
+        model_description = config['ModelDescription']
+        model_input_size = config['ModelInputSize']
 
         # Create VPC
         vpc = ec2.Vpc(self, "FastAPIYOLOVv5VPC", max_azs=2)
@@ -60,13 +63,13 @@ class FastAPIStack(Stack):
         ip_mask = '134.89.0.0/16'
 
         # Create a security group
-        security_group = ec2.SecurityGroup(
+        mbari_security_group = ec2.SecurityGroup(
             self, 'MBARIFastAPISecurityGroup', vpc=vpc,
             allow_all_outbound=True
         )
 
         # Allow inbound access from the specified IP mask
-        security_group.add_ingress_rule(
+        mbari_security_group.add_ingress_rule(
             peer=ec2.Peer.ipv4(ip_mask),
             connection=ec2.Port.tcp(80)
         )
@@ -85,6 +88,8 @@ class FastAPIStack(Stack):
             container_port=80,
             environment={
                 "MODEL_PATH": model_path,
+                "MODEL_DESCRIPTION": model_description,
+                "MODEL_INPUT_SIZE": str(model_input_size),
             },
             secrets={
                 "AWS_ACCESS_KEY_ID": ecs.Secret.from_secrets_manager(secret, "AWS_ACCESS_KEY_ID"),
@@ -101,17 +106,23 @@ class FastAPIStack(Stack):
             memory_limit_mib=8192,
             desired_count=1,
             task_image_options=image_options,
-            security_groups=[security_group],
-
+            open_listener=False
         )
 
+        # Get the ALB
+        lb = self.ecs_service.load_balancer
+
+        # Add the security group to the ALB
+        lb.add_security_group(security_group=mbari_security_group)
+
+        # Setup health check
         self.ecs_service.target_group.configure_health_check(
             path="/health",
             healthy_http_codes="200-299",
             healthy_threshold_count=2,
             unhealthy_threshold_count=2,
-            interval=Duration.seconds(60),
-            timeout=Duration.seconds(5),
+            interval=Duration.seconds(300),
+            timeout=Duration.seconds(60),
         )
 
         # Increase scaling speed

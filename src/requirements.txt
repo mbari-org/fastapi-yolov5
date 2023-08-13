@@ -1,3 +1,6 @@
 fastapi
 uvicorn
 boto3
+python-multipart
+httpx
+pytest

@@ -1,5 +1,7 @@
 
-This repository deploys and runs the YOLOv5 model in the Python web framework [FastAPI](https://fastapi.tiangolo.com/) both locally and in AWS.
+This code deploys and runs the YOLOv5 model in the Python web framework [FastAPI](https://fastapi.tiangolo.com/) either locally or in AWS.
+
+It is currently live at https://deepsea-ai.mbari.org/megadetector/docs
 
 # Requirements
 
@@ -9,26 +11,60 @@ This repository deploys and runs the YOLOv5 model in the Python web framework [F
 
 # Deploy YOLOv5 locally
 
-This will start the FastAPI server on port 3000.  To start the server, run
+## Clone the repository and create the conda environment
+```shell
+git clone http://github.com/mbari-org/fastapi-yolov5
+cd fastapi-yolov5
+conda env create
+```
+
+## Download an example model
+
+```shell
+cd src/app/models
+aws s3 cp --no-sign-request s3://902005-public/models/Megadetector/best.pt .
+aws s3 cp --no-sign-request s3://902005-public/models/Megadetector/labels.txt .
+```
+
+## Start the FastAPI server
+
 ```shell
 docker-compose up
 ```
+To stop the server, run
+```shell
+docker-compose down
+```
 
+# Running
+
+## Health Check
 Check the health of the server by going to `http://localhost:3000/health`.  You should see the following response:
 
 ```json
 {"status":"ok"}
 ```
- You can now send a POST request to `http://localhost:3000/predict_to_json` with an image file in the body to get a prediction.
+
+## Predict to JSON
+
+Send a POST request to `http://localhost:3000/predict` with an image file in the body to get a prediction returned in JSON format.
+By default, predictions greater than 0.01 are posted.
 
 ```shell
-curl -X POST "http://localhost:3000/predict_to_json" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=@<path_to_image>"
+curl -X POST "http://localhost:8000/predict" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=@tests/midwater.png"
 ```
-To stop the server, run
+
+# Predict to an image file
+
+Send a POST request to `http://localhost:8000/image` with an image file in the body to get the predictions displayed on an image.
+By default, predictions greater than 0.01 are displayed.
 
 ```shell
-docker-compose down
+curl -X POST "http://localhost:8000/image" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=@tests/midwater.png"
 ```
+
+![Image link ](tests/midwater_predict_to_image.png)
+ 
 
 
 # Deploy YOLOv5 in AWS
@@ -63,24 +99,37 @@ arn:aws:cloudformation:us-west-2:975513124282:stack/FastAPIStack/89fcc790-07d4-1
 Test this by running a test image through the endpoint
 
 ```
-curl -X POST "http://FastA-FastA-53HYPWCIRUXS-1905789853.us-west-2.elb.amazonaws.com/predict_to_json" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=tests/midwater.png"
+curl -X POST "http://FastA-FastA-53HYPWCIRUXS-1905789853.us-west-2.elb.amazonaws.com/predict" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=tests/midwater.png"
 ```
 
 ## Deploying a custom model locally
 
 To override the default model, you can mount a local directory to the container and set the MODEL_PATH environment variable.
-For example, if you have a model in the directory `~/models/best`, you can mount that directory to the container by adding the following to the `docker-compose.yml` file
-and the  MODEL_PATH environment variable to the `environment` section of the `app` service:
+
+For example, if you have a model in the directory `./models/best`, you can mount that directory to the container by adding 
+the following to the `docker-compose.yml` file.
+
 ```yaml
 app:
     volumes:
-      - ~/models/best:/app/models/best
+      - ./models/midwater102:/app/models/best
     environment:
       - MODEL_PATH=/app/models/best
+      - MODEL_DESCRIPTION="102 classes trained on midwater frame ROV frame grabs"
 ```
 
 The directory should contain the `best.pt` file and the labels file labels.txt for that model.
 The labels file should be in the format of one label per line.
+
+```
+.
+├── models/             # Parent directory for models
+│   │
+│   ├── midwater102/    # Model directory
+│   │   ├── best.pt     #  Model YOLOv5 checkpoint file
+│   │   ├── labels.txt  #  Model YOLOv5 labels file
+
+```
 
 ```shell
 docker-compose up
@@ -89,8 +138,17 @@ docker-compose up
 ## Deploying a custom model in AWS
 
 To override the default model, upload the `best.pt` file and the labels file `labels.txt` for that model to an S3 bucket.
-Specify the S3 bucket in the `ModelPath` variable in the `config.yaml` file, then deploy.
+Specify the S3 bucket in the `MODELPATH` environment variable in the `config.yaml` file.
 The S3 bucket must be in the same region as the ECS cluster
+
+```yaml
+app:
+    environment:
+      - MODEL_PATH=s3://901103-models-deploy/midwatervars102/ 
+      - MODEL_DESCRIPTION="102 classes trained on midwater frame ROV frame grabs"
+```
+
+Deploy the stack with the new configuration
 
 ```shell
 cdk deploy

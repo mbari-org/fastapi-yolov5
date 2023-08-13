@@ -2,13 +2,14 @@ services:
   app:
     build: src
     ports:
-      - "3000:80"
+      - "8000:80"
+    environment:
+      - MODEL_DESCRIPTION=${MODEL_DESCRIPTION:-"Megadetector"}
+      - MODEL_INPUT_SIZE=1280
 # Example below to add for either local or cloud deployment
-#    environment:
 #      - MODEL_PATH=/app/models/midwater # Local model deployment
-#      - MODEL_INPUT_SIZE=640
-#      - MODEL_PATH=s3://901103-models-deploy/midwater/ # Cloud model deployment
-# Model checkpoints in this path must be called best.pt and labels for this model one per each line in labels.txt
+#      - MODEL_PATH=s3://901103-models-deploy/midwatervars102/ # Cloud model deployment
+# Model checkpoints in the above path must be called best.pt and labels for this model one per each line in labels.txt
 #    volumes:
-#      - ~/models/best:/app/models/midwater # Local model deployment
-#      - ${HOME}/.aws/credentials:/root/.aws/credentials:ro # Testing cloud model deployment - not needed for CDK deployment
+#      - ./models/best:/app/models/midwater # Local model deployment
+#      - ${HOME}/.aws/credentials:/root/.aws/credentials:ro # Testing cloud model deployment locally - not needed for CDK deployment

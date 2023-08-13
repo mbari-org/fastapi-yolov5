@@ -8,12 +8,17 @@ from PIL import Image
 import io
 
 MODEL_INPUT_SIZE = 640
+MODEL_DESCRIPTION = "Megadetector"
 
 
 def load_yolov5():
+    """
+    Load the YOLOv5 model either from a local file or from S3
+    :return: model, description
+    """
     print("Loading model...")
-    model_labels = None
-    global MODEL_INPUT_SIZE
+    label_path = None
+    global MODEL_INPUT_SIZE, MODEL_DESCRIPTION
     # TODO: move this and labels to read from a yaml file
 
     # Check if the model input size is specified in the environment variable MODEL_INPUT_SIZE
@@ -23,6 +28,12 @@ def load_yolov5():
     else:
         print(f"MODEL_INPUT_SIZE environment variable found {os.getenv('MODEL_INPUT_SIZE')}")
         MODEL_INPUT_SIZE = int(os.getenv("MODEL_INPUT_SIZE"))
+
+    if os.getenv("MODEL_DESCRIPTION") is None:
+        print(f"MODEL_DESCRIPTION environment variable not found, using default model description {MODEL_DESCRIPTION}")
+    else:
+        print(f"MODEL_DESCRIPTION environment variable found {os.getenv('MODEL_DESCRIPTION')}")
+        MODEL_DESCRIPTION = os.getenv("MODEL_DESCRIPTION")
 
     # Check if the model path is specified in the environment variable MODEL_PATH
     # If not, use the default model path
@@ -82,19 +93,18 @@ def load_yolov5():
 
     print(f"Model path: {model_path}")
 
-    model = torch.hub.load('yolov5', 'custom', path=model_path.as_posix(), source='local')  # local repo
+    model = torch.hub.load(f'{Path(__file__).parent.parent}/yolov5', 'custom', path=model_path.as_posix(), source='local')  # local repo
     model.conf = 0.01
 
-    if model_labels:
+    if label_path:
         print(f"Loading class labels from {label_path}")
         with label_path.open('r') as f:
             class_labels = f.read().splitlines()
             print(f"Class labels: {class_labels}")
+            model.names = class_labels
 
-        model.classes = class_labels
-
-    print(f"Model loaded...")
-    return model
+    print("Model loaded. Ready to process images.")
+    return model, MODEL_DESCRIPTION
 
 
 def scale_image(bytes_images):

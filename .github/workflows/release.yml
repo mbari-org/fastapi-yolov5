@@ -3,7 +3,44 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+
+# Support running these jobs manually
+workflow_dispatch:
+
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r src/requirements.txt
+          pip install -r src/app/yolov5/requirements.txt
+          pip install awscli
+
+      - name: Download data
+        run: |
+          aws s3 cp --no-sign-request s3://902005-public/models/Megadetector/best.pt src/app/model/
+          aws s3 cp --no-sign-request s3://902005-public/models/Megadetector/labels.txt src/app/model/
+
+      - name: Set up environment
+        run: |
+          export PYTHONPATH=$PYTHONPATH:src
+
+      - name: Run pytest
+        run: pytest
+
   semantic_release:
     runs-on: ubuntu-latest
     name: Runs semantic release

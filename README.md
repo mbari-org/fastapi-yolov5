@@ -4,8 +4,11 @@
 [![Python](https://img.shields.io/badge/language-Python-blue.svg)](https://www.python.org/downloads/)
 
 **fastapi-yolov5** code deploys and runs the YOLOv5 model in the Python web framework [FastAPI](https://fastapi.tiangolo.com/) either locally or in AWS.
+In AWS, the model is deployed with ECS Fargate and exposed with an Application Load Balancer.
 
 It is currently live at https://deepsea-ai.mbari.org/megadetector/docs
+
+![Image link ](api_example.png)
 
 # Requirements
 
@@ -43,7 +46,7 @@ docker-compose down
 # Running
 
 ## Health Check
-Check the health of the server by going to `http://localhost:3000/health`.  You should see the following response:
+Check the health of the server by going to `http://localhost:8000/health`.  You should see the following response:
 
 ```json
 {"status":"ok"}
@@ -51,7 +54,7 @@ Check the health of the server by going to `http://localhost:3000/health`.  You 
 
 ## Predict to JSON
 
-Send a POST request to `http://localhost:3000/predict` with an image file in the body to get a prediction returned in JSON format.
+Send a POST request to `http://localhost:8000/predict` with an image file in the body to get a prediction returned in JSON format.
 By default, predictions greater than 0.01 are posted.
 
 ```shell
@@ -120,7 +123,7 @@ app:
     environment:
       - MODEL_WEIGHTS=/app/models/best/best.pt
       - MODEL_LABELS=/app/models/best/labels.txt
-      - MODEL_DESCRIPTION="Megadetector"
+      - MODEL_DESCRIPTION=Megadetector
 ```
  
 The labels file should be in the format of one label per line.
@@ -141,16 +144,22 @@ docker-compose up
 
 ## Deploying a custom model in AWS
 
-To override the default model, upload the `best.pt` file and the labels file `labels.txt` for that model to an S3 bucket.
-Specify the S3 bucket in the `MODELPATH` environment variable in the `config.yaml` file.
-The S3 bucket must be in the same region as the ECS cluster
+Specify any custom configuration on scaling in `config.yaml` file for the stack resources, e.g. min and max capacity.
 
 ```yaml
-app:
-    environment:
-      - MODEL_WEIGHTS=s3://901103-models-deploy/megadetector/best.pt
-      - MODEL_LABELS=s3://901103-models-deploy/megadetector/best.pt 
-      - MODEL_DESCRIPTION="Megadetector"
+MinCapacity: 1
+MaxCapacity: 5
+```
+
+To override the default model, upload yor model, e.g. `best.pt` file and the labels file `labels.txt` for that model to an S3 bucket.
+The S3 bucket must be in the same region as the ECS cluster. Define the S3 bucket and the model path in the `config.yml` file.
+These can be overridden as needed in the AWS console through the ECS task definition as environment variables.
+
+```yaml
+MODEL_WEIGHTS: s3://901103-models-deploy/midwatervars102/best.pt
+MODEL_LABELS: s3://901103-models-deploy/midwatervars102/labels.txt
+MODEL_DESCRIPTION: Megadetector
+MODEL_INPUT_SIZE: 1280
 ```
 
 Deploy the stack with the new configuration

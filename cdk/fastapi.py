@@ -40,12 +40,13 @@ class FastAPIStack(Stack):
         with open("config.yml", 'r') as stream:
             config = yaml.safe_load(stream)
 
-        # Get the model path, and capacity from the config file
-        model_path = config['ModelPath']
+        # Get the model information from environment variables
+        model_weights = config['ModelWeights']
+        model_labels = config['ModelLabels']
+
+        # Cluster capacity
         min_capacity = config['MinCapacity']
         max_capacity = config['MaxCapacity']
-        model_description = config['ModelDescription']
-        model_input_size = config['ModelInputSize']
 
         # Create VPC
         vpc = ec2.Vpc(self, "FastAPIYOLOVv5VPC", max_azs=2)
@@ -74,8 +75,6 @@ class FastAPIStack(Stack):
             connection=ec2.Port.tcp(80)
         )
 
-        # Retrieve the secret value from AWS Secrets Manager
-
         # Retrieve the AWS access key ID secret value from AWS Secrets Manager
         secret = secrets_manager.Secret.from_secret_name_v2(self, "MySecretID", secret_name="prod/s3download")
 
@@ -87,9 +86,10 @@ class FastAPIStack(Stack):
             image=docker_image,
             container_port=80,
             environment={
-                "MODEL_PATH": model_path,
-                "MODEL_DESCRIPTION": model_description,
-                "MODEL_INPUT_SIZE": str(model_input_size),
+                "MODEL_WEIGHTS": config['MODEL_WEIGHTS'],
+                "MODEL_LABELS": config['MODEL_LABELS'],
+                "MODEL_DESCRIPTION": config['MODEL_DESCRIPTION'],
+                "MODEL_INPUT_SIZE": str(config['MODEL_INPUT_SIZE']),
             },
             secrets={
                 "AWS_ACCESS_KEY_ID": ecs.Secret.from_secrets_manager(secret, "AWS_ACCESS_KEY_ID"),

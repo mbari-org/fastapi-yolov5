@@ -49,13 +49,13 @@ app.add_middleware(
 )
 
 
-class Detection(BaseModel):
+class BoundingBox(BaseModel):
     class_id: int
     class_name: str
-    width: int
-    height: int
-    xmin: int
-    ymin: int
+    width: float
+    height: float
+    x: float
+    y: float
     confidence: float
 
 
@@ -74,7 +74,7 @@ def get_health():
 
 
 @app.post("/predict")
-def upload(file: UploadFile = File(...), confidence_threshold: float = 0.01) -> list[Detection]:
+def upload(file: UploadFile = File(...), confidence_threshold: float = 0.01) -> list[BoundingBox]:
     """
     Upload an image file and return the predictions in JSON format.
 
@@ -95,9 +95,9 @@ def upload(file: UploadFile = File(...), confidence_threshold: float = 0.01) -> 
 
     Which should print something like following:
 
-    **[{"class_index": 0, "class_name": "animal", "xmin": 10, "ymin": 20, "width": 1000, "height": 125, "confidence": 0.20}]**
+    **[{"class_index": 0, "class_name": "animal", "x": 10.0, "y": 20.0, "width": 1000.2, "height": 125.3, "confidence": 0.20}]**
 
-    Note that the xmin,ymin origin is the top left corner in pixel coordinates. The width and height are also in pixels.
+    Note that the x,y origin is the top left corner in pixel coordinates. The width and height are also in pixels.
     You can use the **confidence_threshold** parameter to control the confidence score threshold for the predictions.
 
     Want to try this? Click on the **Try it out** button and upload an image using the **Choose File** button in the *Request body* section.
@@ -111,17 +111,13 @@ def upload(file: UploadFile = File(...), confidence_threshold: float = 0.01) -> 
         # Convert the results to a pandas dataframe, drop low confidence scores and convert back to JSON
         results = results.pandas().xyxy[0]
         results.drop(results[results.confidence < confidence_threshold].index, inplace=True)
-        results.rename(columns={"class": "class_id", "name": "class_name"}, inplace=True)
+        results.rename(columns={"class": "class_id", "name": "class_name", "xmin": "x", "ymin": "y"}, inplace=True)
 
         # Output in record format xmin, ymin, width, height as integers for each detection
-        results["width"] = (results["xmax"] - results["xmin"]) / resize_factor
-        results["height"] = (results["ymax"] - results["ymin"]) / resize_factor
-        results["xmin"] = results["xmin"] / resize_factor
-        results["ymin"] = results["ymin"] / resize_factor
-        results["width"] = results["width"].astype(int)
-        results["height"] = results["height"].astype(int)
-        results["ymin"] = results["ymin"].astype(int)
-        results["xmin"] = results["xmin"].astype(int)
+        results["width"] = (results["xmax"] - results["x"]) / resize_factor
+        results["height"] = (results["ymax"] - results["y"]) / resize_factor
+        results["x"] = results["x"] / resize_factor
+        results["y"] = results["y"] / resize_factor
         results.drop(columns=["xmax", "ymax"], inplace=True)
         return results.to_dict(orient="records")
     except Exception as e:

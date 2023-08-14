@@ -36,9 +36,7 @@ def load_yolov5():
     :return: model, description
     """
     print("Loading model...")
-    label_path = None
-    global MODEL_INPUT_SIZE, MODEL_DESCRIPTION
-    # TODO: move this and labels to read from a yaml file
+    global MODEL_INPUT_SIZE, MODEL_DESCRIPTION, MODEL_WEIGHTS, MODEL_LABELS
 
     # Check if the model input size is specified in the environment variable MODEL_INPUT_SIZE
     # If not, use the default image size
@@ -90,18 +88,17 @@ def load_yolov5():
         exit(1)
 
     print(f"Model: {model_path}")
-    print(f"Labels: {model_path}")
+    print(f"Labels: {label_path}")
 
     model = torch.hub.load(f'{Path(__file__).parent.parent}/yolov5', 'custom', path=model_path.as_posix(),
                            source='local')  # local repo
     model.conf = 0.01
 
-    if label_path:
-        print(f"Loading class labels from {label_path}")
-        with label_path.open('r') as f:
-            class_labels = f.read().splitlines()
-            print(f"Class labels: {class_labels}")
-            model.names = class_labels
+    print(f"Loading class labels from {label_path}")
+    with label_path.open('r') as f:
+        class_labels = f.read().splitlines()
+        print(f"Class labels: {class_labels}")
+        model.names = class_labels
 
     print("Model loaded. Ready to process images.")
     return model, MODEL_DESCRIPTION

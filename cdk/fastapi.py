@@ -40,10 +40,6 @@ class FastAPIStack(Stack):
         with open("config.yml", 'r') as stream:
             config = yaml.safe_load(stream)
 
-        # Get the model information from environment variables
-        model_weights = config['ModelWeights']
-        model_labels = config['ModelLabels']
-
         # Cluster capacity
         min_capacity = config['MinCapacity']
         max_capacity = config['MaxCapacity']

@@ -1,5 +1,12 @@
 # FastAPI-YOLOv5  Changelog
 
+## [1.2.1](https://github.com/mbari-org/fastapi-yolov5/compare/v1.2.0...v1.2.1) (2023-08-14)
+
+
+### Bug Fixes
+
+* add in MODEL_WEIGHTS, MODEL_LABELS to cdk stack ([8571930](https://github.com/mbari-org/fastapi-yolov5/commit/8571930779f0d18041eb4feac5de427a8e5e1997))
+
 # [1.2.0](https://github.com/mbari-org/fastapi-yolov5/compare/v1.1.0...v1.2.0) (2023-08-14)
 
 

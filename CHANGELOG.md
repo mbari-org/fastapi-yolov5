@@ -1,5 +1,12 @@
 # FastAPI-YOLOv5  Changelog
 
+# [1.1.0](https://github.com/mbari-org/fastapi-yolov5/compare/v1.0.1...v1.1.0) (2023-08-14)
+
+
+### Features
+
+* support model checkpoint and labels with unique names ([4065501](https://github.com/mbari-org/fastapi-yolov5/commit/4065501f4286e8d15fb1952cdb51f85ba7e0e03d))
+
 ## [1.0.1](https://github.com/mbari-org/fastapi-yolov5/compare/v1.0.0...v1.0.1) (2023-08-13)
 
 

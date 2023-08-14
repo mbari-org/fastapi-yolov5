@@ -1,5 +1,12 @@
 # FastAPI-YOLOv5  Changelog
 
+## [1.2.2](https://github.com/mbari-org/fastapi-yolov5/compare/v1.2.1...v1.2.2) (2023-08-14)
+
+
+### Bug Fixes
+
+* removed unused config ([6f797c4](https://github.com/mbari-org/fastapi-yolov5/commit/6f797c401accf8a0edf7ef4681728efa484a6db7))
+
 ## [1.2.1](https://github.com/mbari-org/fastapi-yolov5/compare/v1.2.0...v1.2.1) (2023-08-14)
 
 

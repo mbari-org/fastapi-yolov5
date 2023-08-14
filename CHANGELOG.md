@@ -1,5 +1,12 @@
 # FastAPI-YOLOv5  Changelog
 
+# [1.2.0](https://github.com/mbari-org/fastapi-yolov5/compare/v1.1.0...v1.2.0) (2023-08-14)
+
+
+### Features
+
+* switch to float and renaming to better align with Pythia API ([7ff01bb](https://github.com/mbari-org/fastapi-yolov5/commit/7ff01bb4ca9982516032783261d75137e8fb567d))
+
 # [1.1.0](https://github.com/mbari-org/fastapi-yolov5/compare/v1.0.1...v1.1.0) (2023-08-14)
 
 

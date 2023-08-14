@@ -7,9 +7,28 @@ import torch
 from PIL import Image
 import io
 
-MODEL_INPUT_SIZE = 640
+MODEL_INPUT_SIZE = 1280
 MODEL_DESCRIPTION = "Megadetector"
 
+
+def download_from_s3(s3_path: str, local_path: str) -> Path:
+    """
+    Download a file from S3 and save it to the local path
+    :param s3_path: S3 path to the file
+    :param local_path: Local path to save the file
+    :return: Path to the downloaded file
+    """
+    s3_parsed = urlparse(s3_path)
+    s3 = boto3.client('s3')
+    try:
+        model_path = local_path / Path(s3_parsed.path).name
+        print(f"Downloading model from {s3_path}")
+        s3.download_file(s3_parsed.netloc, s3_parsed.path.lstrip('/'), model_path.as_posix())
+        print(f"Downloaded to {model_path}")
+        return model_path
+    except Exception as e:
+        print(f"Error downloading model and labels: {e}")
+        exit(1)
 
 def load_yolov5():
     """
@@ -35,65 +54,46 @@ def load_yolov5():
         print(f"MODEL_DESCRIPTION environment variable found {os.getenv('MODEL_DESCRIPTION')}")
         MODEL_DESCRIPTION = os.getenv("MODEL_DESCRIPTION")
 
-    # Check if the model path is specified in the environment variable MODEL_PATH
-    # If not, use the default model path
-    if os.getenv("MODEL_PATH") is None:
-        print("MODEL_PATH environment variable not found, using default model path")
-        path = Path(__file__).parent.parent / "model"
-        model_path = path / 'best.pt'
-        label_path = path / 'labels.txt'
-    else:
-        print(f"MODEL_PATH environment variable found {os.getenv('MODEL_PATH')}")
+    # Default model
+    path = Path(__file__).parent.parent / "model"
+    model_path = path / 'best.pt'
+    label_path = path / 'labels.txt'
 
-        # If the path is a s3 path, download the model to the existing model path model_custom/best.pt
-        # S3 paths are in the format s3://bucket-name/path/to/model/
-        model_path_p = urlparse(os.getenv("MODEL_PATH"))
+    # Create a directory to store the custom model and labels
+    model_base_path = Path("model_custom")
+    model_base_path.mkdir(parents=True, exist_ok=True)
 
-        # Create the model path if it doesn't exist
-        model_base_path = Path("model_custom")
-        model_base_path.mkdir(parents=True, exist_ok=True)
-
-        # If the model path is a s3 path, download the model
-        if model_path_p.scheme == "s3":
-            s3_client = boto3.client('s3')
-            try:
-                model_path = model_base_path / "best.pt"
-                label_path = model_base_path / "labels.txt"
-
-                # If the model has a netloc and path, download the model
-                # netloc is the bucket name
-                # path is the path to the model (and labels.txt)
-                # Example: s3://bucket-name/path/to/model/
-                if model_path_p.netloc and model_path_p.path:
-                    print(f"Downloading model from s3://{model_path_p.netloc}{model_path_p.path}best.pt")
-                    s3_client.download_file(model_path_p.netloc, f"{model_path_p.path.lstrip('/')}best.pt",
-                                            model_path.as_posix())
-                    s3_client.download_file(model_path_p.netloc, f"{model_path_p.path.lstrip('/')}labels.txt",
-                                            label_path.as_posix())
-                elif model_path_p.netloc:
-                    print(f"Downloading model from s3://{model_path_p.netloc}best.pt")
-                    s3_client.download_file(model_path_p.netloc, 'best.pt', model_path.as_posix())
-                    s3_client.download_file(model_path_p.netloc, 'labels.txt', label_path.as_posix())
-
-                print(f"Model and labels downloaded to {model_path}")
-            except Exception as e:
-                print(f"Error downloading model and labels: {e}")
-                exit(1)
+    # Check if custom model data is specified in the environment variables MODEL_WEIGHTS and MODEL_LABELS
+    for e in ["MODEL_WEIGHTS", "MODEL_LABELS"]:
+        env_path = os.getenv(e)
+        if env_path is None:
+            print(f"{e} environment variable not found, using default")
+            path = Path(__file__).parent.parent / "model"
+            if 'MODEL_WEIGHTS':
+                model_path = path / 'best.pt'
+            if 'MODEL_LABELS':
+                label_path = path / 'labels.txt'
         else:
-            model_path = Path(os.getenv("MODEL_PATH")) / "best.pt"
-            label_path = Path(os.getenv("MODEL_PATH")) / "labels.txt"
+            print(f"{e} environment variable found {env_path}")
+            if urlparse(env_path).scheme == "s3":
+                if e == "MODEL_WEIGHTS":
+                    model_path = download_from_s3(env_path, model_base_path)
+                if e == "MODEL_LABELS":
+                    label_path = download_from_s3(env_path, model_base_path)
 
-        if not model_path.exists():
-            print(f"Model path does not exist: {model_path}")
-            exit(1)
+    if not model_path.exists():
+        print(f"Model path does not exist: {model_path}")
+        exit(1)
 
-        if not label_path.exists():
-            print(f"Label path does not exist: {label_path}")
-            exit(1)
+    if not label_path.exists():
+        print(f"Label path does not exist: {label_path}")
+        exit(1)
 
-    print(f"Model path: {model_path}")
+    print(f"Model: {model_path}")
+    print(f"Labels: {model_path}")
 
-    model = torch.hub.load(f'{Path(__file__).parent.parent}/yolov5', 'custom', path=model_path.as_posix(), source='local')  # local repo
+    model = torch.hub.load(f'{Path(__file__).parent.parent}/yolov5', 'custom', path=model_path.as_posix(),
+                           source='local')  # local repo
     model.conf = 0.01
 
     if label_path:
@@ -121,3 +121,9 @@ def scale_image(bytes_images):
         )
     )
     return resized_image, resize_factor
+
+
+if __name__ == "__main__":
+    os.environ["MODEL_WEIGHTS"] = "s3://tarun-901103-test-bucket/model_weights/megafish_ROV_weights.pt"
+    os.environ["MODEL_LABELS"] = "s3://tarun-901103-test-bucket/model_weights/megafish_ROV_labels.txt"
+    load_yolov5()

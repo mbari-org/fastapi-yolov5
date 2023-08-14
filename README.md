@@ -118,11 +118,11 @@ app:
     volumes:
       - ./models/midwater102:/app/models/best
     environment:
-      - MODEL_PATH=/app/models/best
-      - MODEL_DESCRIPTION="102 classes trained on midwater frame ROV frame grabs"
+      - MODEL_WEIGHTS=/app/models/best/best.pt
+      - MODEL_LABELS=/app/models/best/labels.txt
+      - MODEL_DESCRIPTION="Megadetector"
 ```
-
-The directory should contain the `best.pt` file and the labels file labels.txt for that model.
+ 
 The labels file should be in the format of one label per line.
 
 ```
@@ -148,8 +148,9 @@ The S3 bucket must be in the same region as the ECS cluster
 ```yaml
 app:
     environment:
-      - MODEL_PATH=s3://901103-models-deploy/midwatervars102/ 
-      - MODEL_DESCRIPTION="102 classes trained on midwater frame ROV frame grabs"
+      - MODEL_WEIGHTS=s3://901103-models-deploy/megadetector/best.pt
+      - MODEL_LABELS=s3://901103-models-deploy/megadetector/best.pt 
+      - MODEL_DESCRIPTION="Megadetector"
 ```
 
 Deploy the stack with the new configuration

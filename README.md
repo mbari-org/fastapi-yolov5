@@ -5,10 +5,9 @@
 
 **fastapi-yolov5** code deploys and runs the YOLOv5 model in the Python web framework [FastAPI](https://fastapi.tiangolo.com/) either locally or in AWS.
 In AWS, the model is deployed with ECS Fargate and exposed with an Application Load Balancer.
+  
 
-It is currently live at https://deepsea-ai.mbari.org/megadetector/docs
-
-![Image link ](api_example.png)
+![Image link ](api_example.jpg)
 
 # Requirements
 

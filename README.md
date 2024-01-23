@@ -112,7 +112,7 @@ curl -X POST "http://FastA-FastA-53HYPWCIRUXS-1905789853.us-west-2.elb.amazonaws
 
 To override the default model, you can mount a local directory to the container and set the MODEL_PATH environment variable.
 
-For example, if you have a model in the directory `./models/best`, you can mount that directory to the container by adding 
+For example, if you have a model in the directory `./models/midwater102`, you can mount that directory to the container by adding 
 the following to the `docker-compose.yml` file.
 
 ```yaml

@@ -118,10 +118,10 @@ the following to the `docker-compose.yml` file.
 ```yaml
 app:
     volumes:
-      - ./models/midwater102:/app/models/best
+      - ./models/midwater102:/src/app/model
     environment:
-      - MODEL_WEIGHTS=/app/models/best/best.pt
-      - MODEL_LABELS=/app/models/best/labels.txt
+      - MODEL_WEIGHTS=/src/app/model/best.pt
+      - MODEL_LABELS=/src/app/model/labels.txt
       - MODEL_DESCRIPTION=Megadetector
 ```
  

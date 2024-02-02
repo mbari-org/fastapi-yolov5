@@ -140,7 +140,7 @@ The labels file should be in the format of one label per line.
 docker-compose up
 ```
 
-## Deploying a custom model in AWS
+## Deploying a custom model in AWS from node
 
 Specify any custom configuration on scaling in `config.yaml` file for the stack resources, e.g. min and max capacity.
 
@@ -164,4 +164,51 @@ Deploy the stack with the new configuration
 
 ```shell
 cdk deploy
+```
+
+## Deploying a custom model in AWS from docker
+
+Assuming model is trained with deepsea-ai package. Can deploy with script below
+
+Set your AWS keys
+```
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+```
+
+```bash
+#!/bin/bash
+set -x
+# Keep stack output persistent so the cloud formation state doesn't get into a weird state
+mkdir -p stacks/y5x6fastapi
+
+# Create the config file for autoscaling
+cat << 'EOF' > y5x6fastapi.yaml
+Environment: Production
+Author: DCline
+Region: us-west-2
+MinCapacity: 0
+MaxCapacity: 1
+Account: 975513124282
+ProjectName: FastAPI-YOLOv5
+ProjectNumber: 901103
+Description: This stack deploys a Fargate managed ELB environment for creating localized detections from a YOLOv5 model using the FastAPI framework with a Ctenophora sp. A model
+MODEL_WEIGHTS: s3://902005-public/models/Megadetector/best.pt
+MODEL_LABELS: s3://902005-public/models/Megadetector/labels.txt
+MODEL_DESCRIPTION: y5x6ctenospA
+MODEL_INPUT_SIZE: 1280
+EOF
+
+# Run in AWS with
+docker run -it --rm -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+            -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+            -e AWS_REGION=us-west-2 \
+            -e MODEL_WEIGHTS=s3://901103-models-deploy/y5x6ctenospA/best.pt \
+            -e MODEL_LABELS=s3://901103-models-deploy/y5x6ctenospA/labels.txt \
+            -e MODEL_INPUT_SIZE=1280 \
+            -e MODEL_DESCRIPTION=y5x6ctenospA \
+	    -v $PWD/y5x6fastapi.yaml:/app/config.yaml \
+	    -v $PWD/stacks/y5x6fastapi:/logs \
+	    --name y5x6ctenospAflb \
+	    mbari/fastapi-yolov5-fargate-elb /app/config.yaml /logs
 ```

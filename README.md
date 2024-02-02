@@ -17,17 +17,16 @@ In AWS, the model is deployed with ECS Fargate and exposed with an Application L
 
 # Deploy YOLOv5 locally
 
-## Clone the repository and create the conda environment
+## Clone the repository
 ```shell
 git clone http://github.com/mbari-org/fastapi-yolov5
 cd fastapi-yolov5
-conda env create
 ```
 
 ## Download an example model
 
 ```shell
-cd src/app/models
+cd src/app/model
 aws s3 cp --no-sign-request s3://902005-public/models/Megadetector/best.pt .
 aws s3 cp --no-sign-request s3://902005-public/models/Megadetector/labels.txt .
 ```

@@ -39,63 +39,31 @@ jobs:
           PYTHONPATH: src
         run: pytest
 
-  semantic_release:
-    runs-on: ubuntu-latest
-    name: Runs semantic release
-    needs: test
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "lts/*"
-      - name: Install dependencies
-        run: npm install commitizen @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/exec @semantic-release/changelog @semantic-release/npm @semantic-release/git
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: 000000000000000
-          GIT_AUTHOR_NAME: danellecline
-          GIT_COMMITTER_NAME: danellecline
-        run: npx semantic-release
+  jobs:
+    semantic_release:
+      runs-on: ubuntu-latest
+      name: Runs semantic release
+      steps:
+        - uses: actions/checkout@v3
 
-  build:
-    name: docker build
-    needs: [ semantic_release ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code and all tags and branches
-        uses: actions/checkout@v2
-        id: version
-        with:
-          fetch-depth: 0
+        - uses: codfish/semantic-release-action@v3.1.0
+          id: semantic
+          with:
+            dry-run: false
+            branches: |
+              ['main']
+            additional-packages: |
+              ['@semantic-release/git']
+            plugins: |
+              ['@semantic-release/git', '@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/github', '@semantic-release/git']
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            NPM_TOKEN: 000000000000000
 
-      - name: Get docker tag
-        run: |
-          tag_v=$(git describe --tags $(git rev-list --tags --max-count=1))
-          tag=$(echo $tag_v | sed 's/v//')
-          if [[ $tag =~ ^v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-            tag="latest"
-          fi
-          echo "Setting TAG=${tag}"
-          echo "TAG=${tag}" >> $GITHUB_ENV
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push to Docker Hub
-        uses: docker/build-push-action@v3
-        with:
-          context: src
-          push: true
-          tags: |
-            mbari/fastapi-yolov5:${{ env.TAG }}
-            mbari/fastapi-yolov5:latest
-          labels: |
-            IMAGE_URI=mbari/fastapi-yolov5
+        - name: docker push version
+          if: steps.semantic.outputs.new-release-published == 'true'
+          run: |
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} 
+            docker buildx create --name mybuilder --platform linux/amd64,linux/arm64 --use
+            docker buildx build --push --platform linux/amd64,linux/arm64  -t mbari/fastapi-yolov5:$RELEASE_VERSION --label IMAGE_URI=mbari/fastapi-yolov5:$RELEASE_VERSION -f src/Dockerfile .
+            docker buildx build --push --platform linux/amd64,linux/arm64  -t mbari/fastapi-yolov5-fargate-elb:$RELEASE_VERSION --label IMAGE_URI=mbari/fastapi-yolov5-fargate-elb:$RELEASE_VERSION -f Dockerfile.aws .

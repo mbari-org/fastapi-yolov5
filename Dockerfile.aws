@@ -60,5 +60,5 @@ RUN chown -R docker_user:docker /home/docker_user && \
 USER docker_user
 
 ENV PATH="$PATH:/app/node_modules/.bin"
-ENTRYPOINT [ "/app/fastapi-yolov5/entrypoint.sh" ]
+ENTRYPOINT [ "/app/entrypoint.sh" ]
 

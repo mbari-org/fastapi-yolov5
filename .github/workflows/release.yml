@@ -39,31 +39,30 @@ jobs:
           PYTHONPATH: src
         run: pytest
 
-  jobs:
-    semantic_release:
-      runs-on: ubuntu-latest
-      name: Runs semantic release
-      steps:
-        - uses: actions/checkout@v3
+  semantic_release:
+    runs-on: ubuntu-latest
+    name: Runs semantic release
+    steps:
+      - uses: actions/checkout@v3
 
-        - uses: codfish/semantic-release-action@v3.1.0
-          id: semantic
-          with:
-            dry-run: false
-            branches: |
-              ['main']
-            additional-packages: |
-              ['@semantic-release/git']
-            plugins: |
-              ['@semantic-release/git', '@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/github', '@semantic-release/git']
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            NPM_TOKEN: 000000000000000
+      - uses: codfish/semantic-release-action@v3.1.0
+        id: semantic
+        with:
+          dry-run: false
+          branches: |
+            ['main']
+          additional-packages: |
+            ['@semantic-release/git']
+          plugins: |
+            ['@semantic-release/git', '@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/github', '@semantic-release/git']
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: 000000000000000
 
-        - name: docker push version
-          if: steps.semantic.outputs.new-release-published == 'true'
-          run: |
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} 
-            docker buildx create --name mybuilder --platform linux/amd64,linux/arm64 --use
-            docker buildx build --push --platform linux/amd64,linux/arm64  -t mbari/fastapi-yolov5:$RELEASE_VERSION --label IMAGE_URI=mbari/fastapi-yolov5:$RELEASE_VERSION -f src/Dockerfile .
-            docker buildx build --push --platform linux/amd64,linux/arm64  -t mbari/fastapi-yolov5-fargate-elb:$RELEASE_VERSION --label IMAGE_URI=mbari/fastapi-yolov5-fargate-elb:$RELEASE_VERSION -f Dockerfile.aws .
+      - name: docker push version
+        if: steps.semantic.outputs.new-release-published == 'true'
+        run: |
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} 
+          docker buildx create --name mybuilder --platform linux/amd64,linux/arm64 --use
+          docker buildx build --push --platform linux/amd64,linux/arm64  -t mbari/fastapi-yolov5:$RELEASE_VERSION --label IMAGE_URI=mbari/fastapi-yolov5:$RELEASE_VERSION -f src/Dockerfile .
+          docker buildx build --push --platform linux/amd64,linux/arm64  -t mbari/fastapi-yolov5-fargate-elb:$RELEASE_VERSION --label IMAGE_URI=mbari/fastapi-yolov5-fargate-elb:$RELEASE_VERSION -f Dockerfile.aws .

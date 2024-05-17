@@ -15,6 +15,7 @@ Elastic YOLOv5 model deployed using AWS Fargate and AWS CDK
 '''
 
 import yaml
+import os
 from aws_cdk import Stack
 from constructs import Construct
 from aws_cdk import (
@@ -36,8 +37,11 @@ class FastAPIStack(Stack):
     ) -> None:
         super().__init__(scope, id, **kwargs)
 
-        # Import project config
-        with open(process.env.CDK_STACK_CONFIG, 'r') as stream:
+        # Import project config from CDK_STACK_CONFIG environment variable
+        if 'CDK_STACK_CONFIG' not in os.environ:
+            raise ValueError("CDK_STACK_CONFIG environment variable not set")
+
+        with open(os.environ['CDK_STACK_CONFIG'], 'r') as stream:
             config = yaml.safe_load(stream)
 
         # Cluster capacity

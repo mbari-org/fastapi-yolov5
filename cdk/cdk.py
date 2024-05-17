@@ -15,6 +15,7 @@ Scalable deployment of YOLOv5 model
 '''
 import datetime as dt
 import yaml
+import os
 from fastapi import FastAPIStack
 from aws_cdk import (
     App, Environment
@@ -22,8 +23,11 @@ from aws_cdk import (
 
 app = App()
 
-# Import project config
-with open("config.yml", 'r') as stream:
+# Import project config from CDK_STACK_CONFIG environment variable
+if 'CDK_STACK_CONFIG' not in os.environ:
+    raise ValueError("CDK_STACK_CONFIG environment variable not set")
+
+with open(os.environ['CDK_STACK_CONFIG'], 'r') as stream:
     config = yaml.safe_load(stream)
 
 deletion_date = (dt.datetime.utcnow() + dt.timedelta(days=90)).strftime('%Y%m%dT%H%M%SZ')

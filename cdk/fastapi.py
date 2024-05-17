@@ -37,7 +37,7 @@ class FastAPIStack(Stack):
         super().__init__(scope, id, **kwargs)
 
         # Import project config
-        with open("config.yml", 'r') as stream:
+        with open(process.env.CDK_STACK_CONFIG, 'r') as stream:
             config = yaml.safe_load(stream)
 
         # Cluster capacity

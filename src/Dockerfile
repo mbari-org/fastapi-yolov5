@@ -22,7 +22,7 @@ RUN apt update -y && apt install -y software-properties-common && \
 	&& apt-get install -y libncurses6 \
     && apt-get install -y curl \
     && curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10 \
-    && python3.10 -m pip install --upgrade pip==23.2.1 \
+    && python3.10 -m pip install --upgrade pip==23.3.0 \
     && apt-get clean
 
 ENV WORKERS_PER_CORE=4

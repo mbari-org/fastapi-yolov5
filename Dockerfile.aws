@@ -8,7 +8,7 @@ ARG GIT_VERSION=latest
 ARG IMAGE_URI=mbari/fastapi-yolov5-fargate-elb:${GIT_VERSION}
 
 # Install the required node modules, and force the latest version of aws-cdk
-RUN npm install -g aws-cdk
+RUN npm install -g aws-cdk@2.141.0
 
 RUN apt-get update && \
     apt-get install -y git && \
@@ -31,7 +31,7 @@ RUN apt-get update && \
 # Create a virtual environment and run install in that 
 RUN python3 -m venv /venv
 ENV PATH="/venv/bin:$PATH"
-RUN python3 -m pip install --upgrade pip 
+RUN python3 -m pip install --upgrade pip>=23.3.0
 RUN pip3 install aws-cdk-lib pyyaml
 
 WORKDIR /tmp

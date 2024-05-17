@@ -3,6 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - python>=3.10
+  - pip>=23.3
   - pip:
     - aws-cdk.cdk
     - aws-cdk-lib>2.0.0

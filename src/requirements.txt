@@ -4,3 +4,5 @@ boto3
 python-multipart
 httpx
 pytest
+gunicorn>=22.0.0
+flask>=2.2.5

@@ -1,6 +1,6 @@
 # !/usr/bin/env python
 __author__ = "Danelle Cline"
-__copyright__ = "Copyright 2023, MBARI"
+__copyright__ = "Copyright 2024, MBARI"
 __credits__ = ["MBARI"]
 __license__ = "GPL"
 __maintainer__ = "Danelle Cline"

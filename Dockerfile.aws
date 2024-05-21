@@ -46,8 +46,8 @@ WORKDIR /app
 
 RUN mv /tmp/fastapi-yolov5/* .
 
-ARG DOCKER_GID=12078
-ARG DOCKER_UID=20
+ARG DOCKER_GID=998
+ARG DOCKER_UID=12078
 
 # Create a user with a specific UID and GID and add to docker group
 RUN groupadd -g ${DOCKER_GID} docker && \

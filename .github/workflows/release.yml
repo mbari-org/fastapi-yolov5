@@ -47,6 +47,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check release status
+        id: release-status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install python-semantic-release
+          if semantic-release --noop --strict version
+          then
+            echo "Releasing new version."
+          else
+            echo "Skipping release steps."
+          fi
+
       - name: Python Semantic Release
         id: semantic
         uses: python-semantic-release/python-semantic-release@master
@@ -54,8 +67,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: docker push version
-        if: steps.release.outputs.released == 'true'
         run: |
+          export RELEASE_VERSION=$(echo ${{ steps.release-status.outputs.tag }} | cut -c 2-)
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} 
           docker buildx create --name mybuilder --platform linux/amd64,linux/arm64 --use
           docker buildx build --push --platform linux/amd64,linux/arm64  -t mbari/fastapi-yolov5-fargate-elb:$RELEASE_VERSION --label IMAGE_URI=mbari/fastapi-yolov5-fargate-elb:$RELEASE_VERSION -f Dockerfile.aws .

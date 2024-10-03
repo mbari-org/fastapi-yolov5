@@ -73,3 +73,19 @@ jobs:
           docker buildx create --name mybuilder --platform linux/amd64,linux/arm64 --use
           docker buildx build --push --platform linux/amd64,linux/arm64  -t mbari/fastapi-yolov5-fargate-elb:$RELEASE_VERSION --label IMAGE_URI=mbari/fastapi-yolov5-fargate-elb:$RELEASE_VERSION -f Dockerfile.aws .
           cd src && docker buildx build --push --platform linux/amd64,linux/arm64  -t mbari/fastapi-yolov5:$RELEASE_VERSION --label IMAGE_URI=mbari/fastapi-yolov5:$RELEASE_VERSION .
+  push_readme_to_dockerhub:
+    runs-on: ubuntu-latest
+    name: Push README to Docker Hub
+    steps:
+        - name: git checkout
+          uses: actions/checkout@v2
+        - name: push README to Dockerhub
+          uses: christian-korneck/update-container-description-action@v1
+          env:
+            DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+            DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
+          with:
+            destination_container_repo: mbari/fastapi-yolov5:latest
+            provider: dockerhub
+            short_description: 'YOLOv5 Machine Learning API powered by the FastAPI framework'
+            readme_file: 'README.md'

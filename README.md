@@ -5,9 +5,8 @@
 
 **fastapi-yolov5** code deploys and runs the YOLOv5 model in the Python web framework [FastAPI](https://fastapi.tiangolo.com/) either locally or in AWS.
 In AWS, the model is deployed with ECS Fargate and exposed with an Application Load Balancer.
-  
 
-![Image link ](api_example.jpg)
+![](https://raw.githubusercontent.com/mbari-org/fastapi-yolov5/main/api_example.jpg) 
 
 # Requirements
 
@@ -68,8 +67,7 @@ By default, predictions greater than 0.01 are displayed.
 curl -X POST "http://localhost:8000/image" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=@tests/midwater.png" -o midwater_detect.png
 ```
 
-![Image link ](tests/midwater_predict_to_image.png)
- 
+![](https://raw.githubusercontent.com/mbari-org/fastapi-yolov5/main/tests/midwater_predict_to_image.png) 
 
 
 # Deploy YOLOv5 in AWS

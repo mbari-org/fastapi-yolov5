@@ -94,6 +94,10 @@ def load_yolov5():
                            source='local')  # local repo
     model.conf = 0.01
 
+    # If GPU is available, use it
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device).eval()
+
     print(f"Loading class labels from {label_path}")
     with label_path.open('r') as f:
         class_labels = f.read().splitlines()

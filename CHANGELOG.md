@@ -1,6 +1,14 @@
 # CHANGELOG
 
+## v1.2.9 (2024-10-03)
 
+### Build
+
+* build: correct conditional for docker build on release only ([`753ca5a`](https://github.com/mbari-org/fastapi-yolov5/commit/753ca5a36fe0dc058ee9320c708381d658d49b5d))
+
+### Performance
+
+* perf: add GPU load if available ([`0e5d3e8`](https://github.com/mbari-org/fastapi-yolov5/commit/0e5d3e879cc9065099ded9b8485c83ccca5822c9))
 
 ## v1.2.8 (2024-05-21)
 
@@ -14,13 +22,11 @@
 
 * fix: fake fix to trigger new release updated copyright ([`5a0ccc4`](https://github.com/mbari-org/fastapi-yolov5/commit/5a0ccc474c95fc31bcc193e6073cdc5d773d5759))
 
-
 ## v1.2.7 (2024-05-20)
 
 ### Fix
 
 * fix: correct docker id for dev ops deployment ([`f81a637`](https://github.com/mbari-org/fastapi-yolov5/commit/f81a637d75469aabd2a7c026541693969c21a290))
-
 
 ## v1.2.6 (2024-05-16)
 
@@ -28,13 +34,11 @@
 
 * fix: security fixes per dependabot reports and pin cdk to work around https://github.com/aws/aws-cdk/issues/30241 in docker deploy ([`9b282f6`](https://github.com/mbari-org/fastapi-yolov5/commit/9b282f683f375702c13c22ba190159ed462053f9))
 
-
 ## v1.2.5 (2024-05-16)
 
 ### Fix
 
 * fix: correct check for CDK_STACK_CONFIG ([`d2c062d`](https://github.com/mbari-org/fastapi-yolov5/commit/d2c062da71c4f25451d924ca46e1d37840e827a0))
-
 
 ## v1.2.4 (2024-05-16)
 
@@ -45,7 +49,6 @@
 ### Fix
 
 * fix: correct pass through of yaml config through CDK_STACK_CONFIG variable ([`a914349`](https://github.com/mbari-org/fastapi-yolov5/commit/a91434987fd2ce9654ebb9783680c92dd184464c))
-
 
 ## v1.2.3 (2024-03-10)
 
@@ -73,7 +76,6 @@
 
 * fix: correct path for entrypoint ([`0e14994`](https://github.com/mbari-org/fastapi-yolov5/commit/0e149942cb3f1902897aa46330ca766bdd16ff62))
 
-
 ## v1.2.2 (2023-08-14)
 
 ### Build
@@ -83,7 +85,6 @@
 ### Fix
 
 * fix: removed unused config ([`6f797c4`](https://github.com/mbari-org/fastapi-yolov5/commit/6f797c401accf8a0edf7ef4681728efa484a6db7))
-
 
 ## v1.2.1 (2023-08-14)
 
@@ -95,7 +96,6 @@
 
 * fix: add in MODEL_WEIGHTS, MODEL_LABELS to cdk stack ([`8571930`](https://github.com/mbari-org/fastapi-yolov5/commit/8571930779f0d18041eb4feac5de427a8e5e1997))
 
-
 ## v1.2.0 (2023-08-14)
 
 ### Build
@@ -105,7 +105,6 @@
 ### Feature
 
 * feat: switch to float and renaming to better align with Pythia API ([`7ff01bb`](https://github.com/mbari-org/fastapi-yolov5/commit/7ff01bb4ca9982516032783261d75137e8fb567d))
-
 
 ## v1.1.0 (2023-08-14)
 
@@ -121,7 +120,6 @@
 
 * feat: support model checkpoint and labels with unique names ([`4065501`](https://github.com/mbari-org/fastapi-yolov5/commit/4065501f4286e8d15fb1952cdb51f85ba7e0e03d))
 
-
 ## v1.0.1 (2023-08-13)
 
 ### Build
@@ -135,7 +133,6 @@
 ### Fix
 
 * fix: correct docker build for 3.10 as needed for current design ([`0608b74`](https://github.com/mbari-org/fastapi-yolov5/commit/0608b74cfa5ec83c89b45ddb35742e4b6f15b0db))
-
 
 ## v1.0.0 (2023-08-13)
 

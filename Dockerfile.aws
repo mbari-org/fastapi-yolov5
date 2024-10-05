@@ -8,7 +8,7 @@ ARG GIT_VERSION=latest
 ARG IMAGE_URI=mbari/fastapi-yolov5-fargate-elb:${GIT_VERSION}
 
 # Install the required node modules, and force the latest version of aws-cdk
-RUN npm install -g aws-cdk@2.141.0
+RUN npm install -g aws-cdk@latest
 
 RUN apt-get update && \
     apt-get install -y git && \
